@@ -1,1 +1,358 @@
+1) please write code to remove the duplicate
+
+2) args and kwargs
+
+*args accepts multiple positional arguments.
+
+ 
+def add(*args):
+ return sum(args)
+ 
+print(add(1,2,3))
+
+output--6
+
+**kwargs accepts multiple keyword arguments.
+
+ 
+def details(**kwargs):
+ print(kwargs)
+
+output--{'name': 'Rakesh', 'location': 'Bangalore'}
+ 
+details(name="Rakesh", location="Bangalore")
+
+3) sumofodd 
+
+4) what is list and tuple 
+
+5) count validation 
+
+6) null check in   
+
+7) What is a lambda function?
+
+Answer: Anonymous one-line function.
+
+square = lambda x: x*x
+ 
+ print(square(5))
+ 
+ output--25
+ 
+ cube = lambda x: x*x*x
+print(cube(5))
+
+output-125
+
+8)Difference between append() and extend()?
+
+a = [1,2]
+
+a.append([3,4])
+print(a)
+
+output--[1, 2, [3, 4]]
+
+a = [1,2]
+
+a.extend([3,4])
+print(a)
+
+output--[1, 2, 3, 4]
+
+9)How do you handle null values?
+
+Check nulls:
+
+df.isnull().sum()
+
+Fill nulls:
+
+df.fillna(0)
+
+Remove nulls:
+
+df.dropna()
+
+10) How do you filter data?
+
+df[df["salary"] > 50000]
+
+Multiple conditions:
+
+ 
+df[(df["salary"] > 50000) &
+(df["department"] == "IT")]
+
+11) Difference between merge() and concat()?
+
+--Joins tables like SQL join.
+
+pd.merge(df1, df2, on="id")
+
+--concat()
+
+Appends DataFrames.
+
+ 
+pd.concat([df1, df2])
+
+12) How do you remove duplicates?
+
+df.drop_duplicates(inplace=True)
+
+ 
+
+--Specific columns:
+
+df.drop_duplicates(
+subset=['employee_id']
+)
+
+13) How do you group data?
+
+df.groupby('department')['salary'].sum()
+ 
+
+Example output:
+
+IT 500000
+HR 300000
+Sales 400000
+
+14) How do you read large CSV files efficiently?
+
+for chunk in pd.read_csv(
+"data.csv",
+chunksize=10000):
+print(chunk.shape)
+
+Benefits:
+Prevents memory issues
+Faster processing
+
+15) How do you merge two DataFrames?
+
+result = pd.merge(
+emp_df,
+dept_df,
+on="dept_id",
+how="inner"
+)
+
+Types:
+
+inner
+left
+right
+outer
+
+15) What is the difference between apply(), map(), and applymap()?
+map()
+
+--Single Series
+
+df['gender'].map({
+'M':'Male',
+'F':'Female'
+})
+
+--apply()
+
+Rows/columns:-
+
+ 
+df['salary'].apply(lambda x: x*1.1)
+ 
+applymap()
+
+Entire DataFrame
+
+ 
+df.applymap(str)
+
+16) What is the difference between Deep Copy and Shallow Copy?
+ All code copied to clipboard
+
+import copy
+ 
+a = [[1,2],[3,4]]
+shallow = copy.copy(a)
+deep = copy.deepcopy(a)
+
+Shallow copy copies references.
+Deep copy creates completely independent objects.
+
+17) What is List Comprehension?
+
+squares = [x*x for x in range(5)]
+ 
+print(squares)
+ 
+
+Output:
+
+[0,1,4,9,16]
+
+Advantages:
+
+Cleaner code
+Better performance
+
+18) What is Exception Handling?
+ 
+try:
+result = 10/0
+ 
+except ZeroDivisionError:
+print("Divide by zero error")
+ 
+finally:
+print("Execution completed")
+
+19) What are Generators?
+ 
+def numbers():
+for i in range(5):
+yield i
+ 
+for n in numbers():
+print(n)
+ 
+
+Benefits:
+
+Memory efficient
+Data processed lazily
+
+20) Difference between is and == ?
+ 
+a = [1,2]
+b = [1,2]
+ 
+print(a == b)
+print(a is b)
+ 
+
+Output:
+
+True
+False
+ 
+== compares values.
+is compares object memory locations.
+
+21) What is the difference between Deep Copy and Shallow Copy?
+
+Answer:
+
+import copy
+ 
+a = [[1,2],[3,4]]
+ 
+shallow = copy.copy(a)
+deep = copy.deepcopy(a)
+
+Shallow Copy copies references.
+Deep Copy creates independent copies.
+
+22)What is a DataFrame?
+
+Answer: A DataFrame is a two-dimensional tabular structure in Pandas.
+
+import pandas as pd
+ 
+df = pd.DataFrame({
+'ID':[1,2],
+'Name':['John','Mike']
+})
+
+23) How do you read a CSV file?
+
+Answer:
+
+ 
+import pandas as pd
+ 
+df = pd.read_csv("employee.csv")
+
+24) How do you handle missing values?
+
+Answer:
+
+df.isnull().sum()
+ 
+df.fillna(0, inplace=True)
+ 
+df.dropna(inplace=True)
+
+24 ) Difference between loc and iloc?
+
+Answer:
+
+# label based
+df.loc[0, 'Name']
+ 
+# position based
+df.iloc[0, 1]
+
+loc → label-based.
+iloc → index-based.
+
+
+25) string=Malayalam, please revere the string and check the palindrome and convert to list 
+  # "Malayalam" reverse the string and chek for the palindrome and convert to list 
+     
+step1:define the original string                                                                             
+
+string="Malayalam"
+
+lower=string.lower()
+
+ step2:- revere the string using slice
+reversed_lower=lower[::-1]
+
+stept3:- check print if palindrome
+if lower==reversed_lower:
+    print(f"string is palindrome: {reversed_lower}")
+else:
+    print(f"string is not palindrome: {reversed_lower}")
+   step4:- convert to list 
+
+char_list= list(string)
+print("converted list",char_list)
+
+# "Malayalam" reverse the string and chek for the palindrome and convert to list 
+string="Malayalam"
+lower=string.lower()
+reversed_lower=lower[::-1]
+if lower==reversed_lower:
+    print(f"string is palindrome: {reversed_lower}")
+else:
+    print(f"string is not palindrome: {reversed_lower}")
+char_list= list(string)
+print("converted list",char_list)
+
+26) # Character Frequency: Count the number of times each character appears in a string.
+
+from collections import Counter
+
+def count_characters(text):
+
+# Method 1: Using the built-in Counter (Recommended)
+    return Counter(text)
+
+# Example usage:
+input_str = "hello world"
+result = count_characters(input_str)
+print(result)
+# Output: Counter({'l': 3, 'o': 2, 'h': 1, 'e': 1, ' ': 1, 'w': 1, 'r': 1, 'd': 1})
+
+
+
+
+  
+        
+       
 

@@ -310,3 +310,315 @@ WHERE(departmentId,Salary) IN
 SELECT departmentId, MAX(Salary) FROM Employee
 GROUP BY departmentId
 );
+
+11:)
+Write a solution to find the employees who are high earners in each of the departments.
+
+Example 1:
+
+Input: 
+Employee table:
++----+-------+--------+--------------+
+| id | name  | salary | departmentId |
++----+-------+--------+--------------+
+| 1  | Joe   | 85000  | 1            |
+| 2  | Henry | 80000  | 2            |
+| 3  | Sam   | 60000  | 2            |
+| 4  | Max   | 90000  | 1            |
+| 5  | Janet | 69000  | 1            |
+| 6  | Randy | 85000  | 1            |
+| 7  | Will  | 70000  | 1            |
++----+-------+--------+--------------+
+Department table:
++----+-------+
+| id | name  |
++----+-------+
+| 1  | IT    |
+| 2  | Sales |
++----+-------+
+Output: 
++------------+----------+--------+
+| Department | Employee | Salary |
++------------+----------+--------+
+| IT         | Max      | 90000  |
+| IT         | Joe      | 85000  |
+| IT         | Randy    | 85000  |
+| IT         | Will     | 70000  |
+| Sales      | Henry    | 80000  |
+| Sales      | Sam      | 60000  |
++------------+----------+--------+
+Explanation: 
+In the IT department:
+- Max earns the highest unique salary
+- Both Randy and Joe earn the second-highest unique salary
+- Will earns the third-highest unique salary
+
+In the Sales department:
+- Henry earns the highest salary
+- Sam earns the second-highest salary
+- There is no third-highest salary as there are only two employees
+
+sql query
+
+with high_earner as(
+select   d.name as department,e.name as employee,e.salary,
+dense_rank() over(partition by e.departmentId order by e.salary desc) as sal_rank
+from Employee e join Department d on e.departmentId=d.id)
+
+select department, employee, salary
+from high_earner
+where sal_rank between 1 and 3
+
+12)
+Write a solution to find all dates' id with higher temperatures compared to its previous dates (yesterday).
+
+Return the result table in any order.
+Example 1:
+
+Input: 
+Weather table:
++----+------------+-------------+
+| id | recordDate | temperature |
++----+------------+-------------+
+| 1  | 2015-01-01 | 10          |
+| 2  | 2015-01-02 | 25          |
+| 3  | 2015-01-03 | 20          |
+| 4  | 2015-01-04 | 30          |
++----+------------+-------------+
+Output: 
++----+
+| id |
++----+
+| 2  |
+| 4  |
++----+
+Explanation: 
+In 2015-01-02, the temperature was higher than the previous day (10 -> 25).
+In 2015-01-04, the temperature was higher than the previous day (20 -> 30).
+
+oracle 
+-------------
+SELECT w1.id
+FROM Weather w1
+JOIN Weather w2
+    ON w1.recordDate = w2.recordDate + 1
+WHERE w1.temperature > w2.temperature;
+
+sql server
+-------------
+SELECT w1.id
+FROM Weather w1
+JOIN Weather w2
+    ON w1.recordDate = DATEADD(DAY, 1, w2.recordDate)
+WHERE w1.temperature > w2.temperature;
+
+----
+WITH WeatherCTE AS (
+    SELECT
+        id,
+        recordDate,
+        temperature,
+        LAG(recordDate) OVER (ORDER BY recordDate) AS prev_date,
+        LAG(temperature) OVER (ORDER BY recordDate) AS prev_temp
+    FROM Weather
+)
+SELECT id
+FROM WeatherCTE
+WHERE recordDate = DATE_ADD(prev_date, INTERVAL 1 DAY)
+  AND temperature > prev_temp;
+  
+ ----commomn
+ SELECT w1.id
+FROM Weather w1
+JOIN Weather w2
+    ON w1.recordDate = DATE_ADD(w2.recordDate, INTERVAL 1 DAY)
+WHERE w1.temperature > w2.temperature;
+
+13) Remove the duplicate records and keep original records
+
+14) String="Microsoft" , please find the count of  "o" occurance 
+
+select string,length(string)-legnth(replace,'o','') as count_od_occurance
+from the emp
+
+select first_name,length(first_name)-length(Replace(first_name,'e','')) as count_of_occurance
+from hr.employees;
+
+15) what is referencial integrity and write an sql to find orphans records 
+hint-left join 
+
+
+16)/*Sample Query: Comparing Salaries by Department
+This query lists each employee alongside their department name, 
+their salary, the salary of the previous employee earning less/more, 
+and the salary of the next employee based on their hire date or salary ordering
+   */
+
+select e.employee_id,e.FIRST_NAME,d.DEPARTMENT_NAME,e.salary,
+lag(e.salary,1) over (partition by e.DEPARTMENT_ID order by salary) as previou_emp,
+lead(e.salary,1) over (partition by e.DEPARTMENT_ID order by salary) as next_emp
+from hr.employees e
+join hr.departments d
+on e.DEPARTMENT_ID=d.DEPARTMENT_ID;
+
+17)
+--number of days,month,year in company=currentdate-hire_date
+SELECT employee_id,
+    first_name,
+    hire_date,
+    -- Total days divided by days in a year
+    CAST((CURRENT_DATE - hire_date) / 365.25 AS INT) AS number_of_years,
+    -- Total days divided by average days in a month (approx. 30.44)
+    CAST((CURRENT_DATE - hire_date) / 30.4375 AS INT) AS number_of_month,
+    -- Total days between the two dates
+    CAST(CURRENT_DATE - hire_date AS INT) AS number_of_days
+FROM hr.EMPLOYEES;
+
+
+17)  Given a table Sales with columns SaleID, ProductID, SaleDate, and Quantity, write a query to find the total quantity sold for each product per month.
+
+SELECT ProductID, DATE_TRUNC('month', SaleDate) AS Month, SUM(Quantity) AS TotalQuantity
+FROM Sales
+GROUP BY ProductID, Month
+ORDER BY ProductID, Month;
+
+18)  Write a SQL query to find the top 5 customers with the highest total purchase amount. Assume you have two tables: Customers (CustomerID, Name) and Orders (OrderID, CustomerID, Amount).
+
+SELECT c.CustomerID, c.Name, SUM(o.Amount) AS TotalPurchase
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+GROUP BY c.CustomerID, c.Name
+ORDER BY TotalPurchase DESC
+LIMIT 5;
+
+19) Write a SQL query to find all employees who have more than one manager. Assume you have a table Employees (EmployeeID, Name, ManagerID).
+
+SELECT EmployeeID, Name
+FROM Employees
+GROUP BY EmployeeID, Name
+HAVING COUNT(DISTINCT ManagerID) > 1;
+
+
+20) Given a table Orders with columns OrderID, CustomerID, OrderDate, and a table OrderDetails with columns OrderID, ProductID, Quantity, write a query to find the top 3 products with the highest sales quantity.
+
+SELECT ProductID, SUM(Quantity) AS TotalQuantity
+FROM OrderDetails
+GROUP BY ProductID
+ORDER BY TotalQuantity DESC
+LIMIT 3;
+
+21) Write a SQL query to find the second most recent order date for each customer from a table Orders (OrderID, CustomerID, OrderDate).
+
+SELECT CustomerID, MAX(OrderDate) AS SecondRecentOrderDate
+FROM Orders
+WHERE OrderDate < (SELECT MAX(OrderDate) FROM Orders o2 WHERE o2.CustomerID = Orders.CustomerID)
+GROUP BY CustomerID;
+
+23) diff between on and using 
+Key Differences
+• Column Names:
+	• ON: Works even when the joined columns have different names (e.g., ON table1.id = table2.user_id).
+	• USING: Requires the column names to be identical in both tables (e.g., USING (id)).
+• Result Set Columns:
+	• ON: Preserves both copies of the join columns separately in the output.
+	• USING: Merges/coalesces the matching join columns into a single shared column in the final result.
+• Condition Flexibility:
+	• ON: Supports complex expressions, inequalities (<, >, !=), and multiple logical conditions.
+	• USING: Tests strictly for equality (=) between the specified columns.
+• Compatibility:
+	• ON: Supported universally across all major SQL databases.
+	• USING: Supported by MySQL, PostgreSQL, Oracle, and BigQuery, but not by SQL Server (T-SQL)
+ 
+
+24) Direct Comparison
+
+Feature	Regular     View	                            Materialized View
+Data Storage	  Virtual (Zero disk space used)	Physical (Stored on disk)
+Query Speed	  Slower for complex queries
+                 (re-runs every time)	                Exceptionally fast (reads directly from cache)
+Data Freshness	   Always real-time and current	       Stale until manually or automatically refreshed
+Indexing	  Cannot be indexed directly	        Can be indexed to speed up queries further
+Write Overhead	    None	                        High maintenance cost during periodic data refreshes
+
+
+25)  please write the sql to get the count of sum of amount in diff column as succ and fail two diff column
+
+i/p
+
+id amount status
+1   100    succ
+2   200    succ
+3   300    fail
+4   500    succ
+5   600    fail  
+
+
+o/p
+
+SUCC_COUNT	SUCC_TOTAL_AMOUNT	FAIL_COUNT	FAIL_TOTAL_AMOUNT
+3	800 (100 + 200 + 500)	2	900 (300 + 600)
+
+
+Here is the SQL query to get the total count and sum of amounts split into separate columns for successful and failed transactions.
+
+SELECT 
+    COUNT(CASE WHEN status = 'succ' THEN 1 END) AS succ_count,
+    SUM(CASE WHEN status = 'succ' THEN amount ELSE 0 END) AS succ_total_amount,
+    COUNT(CASE WHEN status = 'fail' THEN 1 END) AS fail_count,
+    SUM(CASE WHEN status = 'fail' THEN amount ELSE 0 END) AS fail_total_amount
+FROM your_table_name;
+
+
+for employee table :=-
+with status_a as (
+    select employee_id, salary,
+    case when salary>5000 then 'succ'
+        when salary<5000  then 'fail' end as status from hr.EMPLOYEES
+)
+
+SELECT * 
+FROM (
+    SELECT status, salary 
+    FROM status_a
+)
+PIVOT (
+    COUNT(*) AS cnt,
+    SUM(salary) AS amt
+    FOR status IN ('succ' AS succ, 'fail' AS fail)
+);
+
+------option 2 
+with status_a as (
+    select employee_id, salary,
+    case when salary>5000 then 'succ'
+        when salary<5000  then 'fail' end as status from hr.EMPLOYEES
+)
+select sum(total_succ),sum(total_fail) from (select employee_id,salary,status,
+case when status='succ' then salary  else 0 end as total_succ,
+case when status='fail' then salary else 0 end as total_fail
+from status_a);
+
+25) please get the records from both tables using union (missing one column in target):
+
+select DEPARTMENT_ID, first_name from hr.employees
+union 
+select DEPARTMENT_ID,'first_name' as first_name from hr.DEPARTMENTS;
+
+26) nvl and nvl2 
+select EMPLOYEE_ID,salary,
+nvl(commission_pct,0),
+nvl2(commission_pct,1,salary),
+(salary+nvl(commission_pct,0)) as total_salary from hr.employees
+where COMMISSION_PCT is not null;
+
+27) first name , domainname,last name 
+----with is used to get the email from the employee table 
+with emailtable as (
+    select concat(first_name,'.',last_name,'@tcs.com ') as email from hr.employees
+)
+select email,
+substr(email,1,instr(email,'.')-1) as firstname,
+substr (email,instr(email,'.')+1,instr(email,'@') - instr(email,'.')-1) as lasttname,
+substr(email,instr(email,'@')+1) as domainname
+from emailtable;
+
